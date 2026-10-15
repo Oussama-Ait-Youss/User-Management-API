@@ -18,8 +18,7 @@ public class UserResponse {
     private boolean isActive;
 
 
-    public UserResponse(Long id,String first_name,String last_name,UserRole role,String email,String password,boolean isActive){
-        this.id = id;
+    public UserResponse(String first_name,String last_name,UserRole role,String email,String password,boolean isActive){
         this.first_name = first_name;
         this.last_name = last_name;
         this.role = role;
@@ -38,19 +37,19 @@ public class UserResponse {
         this.id = id;
     }
 
-    public String getFirst_name() {
+    public String getFirstName() {
         return first_name;
     }
 
-    public void setFirst_name(String first_name) {
+    public void setFirstName(String first_name) {
         this.first_name = first_name;
     }
 
-    public String getLast_name() {
+    public String getLastName() {
         return last_name;
     }
 
-    public void setLast_name(String last_name) {
+    public void setLastName(String last_name) {
         this.last_name = last_name;
     }
 

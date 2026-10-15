@@ -1,58 +1,74 @@
 package com.usermanagementapi.model;
 
 import com.usermanagementapi.model.enums.UserRole;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 
-import java.time.LocalDate;
-
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "first_name")
-    private String first_name;
+    @Column(name = "first_name", nullable = false, length = 100)
+    private String firstName;
 
-    @Column(name = "last_name")
-    private String last_name;
+    @Column(name = "last_name", nullable = false, length = 100)
+    private String lastName;
 
-    @Column(name = "role")
-    private UserRole role;
-
-    @Column(name = "email")
+    @Column(nullable = false, unique = true, length = 150)
     private String email;
 
-    @Column(name = "password")
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "isActive")
-    private boolean isActive;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private UserRole role;
 
+    @Column(nullable = false)
+    private boolean active = true;
 
-    @Column(name = "create_at")
-    private LocalDate create_at;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 
-    @Column(name = "update_at")
-    private LocalDate update_at;
-
-    public User(){
-
+    public User() {
     }
 
-    public User(String first_name, String last_name,UserRole role,String email, String password,boolean isactive){
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.role = role;
+    public User(String firstName, String lastName, String email, String password, UserRole role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.isActive = isactive;
+        this.role = role;
+        this.active = true;
     }
 
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
     public Long getId() {
         return id;
@@ -62,28 +78,23 @@ public class User {
         this.id = id;
     }
 
-    public String getFirst_name() {
-        return first_name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getLast_name() {
-        return last_name;
+    public String getLastName() {
+        return lastName;
+    }
+    public String getName(){
+        return firstName + " " + lastName;
     }
 
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
-    }
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -102,43 +113,27 @@ public class User {
         this.password = password;
     }
 
-    public boolean isIsactive() {
-        return isActive;
+    public UserRole getRole() {
+        return role;
     }
 
-    public void setIsactive(boolean isactive) {
-        this.isActive = isactive;
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 
-    public LocalDate getCreate_at() {
-        return create_at;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setCreate_at(LocalDate create_at) {
-        this.create_at = create_at;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
-    public LocalDate getUpdate_at() {
-        return update_at;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setUpdate_at(LocalDate update_at) {
-        this.update_at = update_at;
-    }
-
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", first_name='" + first_name + '\'' +
-                ", last_name='" + last_name + '\'' +
-                ", role=" + role +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", isactive=" + isActive +
-                ", create_at=" + create_at +
-                ", update_at=" + update_at +
-                '}';
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 }
