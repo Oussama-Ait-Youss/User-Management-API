@@ -30,7 +30,7 @@ public class User {
     private String password;
 
     @Column(name = "isActive")
-    private boolean isactive;
+    private boolean isActive;
 
 
     @Column(name = "create_at")
@@ -50,7 +50,7 @@ public class User {
         this.role = role;
         this.email = email;
         this.password = password;
-        this.isactive = isactive;
+        this.isActive = isactive;
     }
 
 
@@ -103,11 +103,11 @@ public class User {
     }
 
     public boolean isIsactive() {
-        return isactive;
+        return isActive;
     }
 
     public void setIsactive(boolean isactive) {
-        this.isactive = isactive;
+        this.isActive = isactive;
     }
 
     public LocalDate getCreate_at() {
@@ -136,7 +136,7 @@ public class User {
                 ", role=" + role +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", isactive=" + isactive +
+                ", isactive=" + isActive +
                 ", create_at=" + create_at +
                 ", update_at=" + update_at +
                 '}';
