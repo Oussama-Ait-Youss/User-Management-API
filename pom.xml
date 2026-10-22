@@ -1,202 +1,113 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         https://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.usermanagementapi</groupId>
     <artifactId>User_Management_API</artifactId>
     <version>1.0-SNAPSHOT</version>
-
-    <!-- Déploiement WAR sur Tomcat 10.1 -->
     <packaging>war</packaging>
 
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <!-- Versions imposées par le cahier des charges -->
         <spring.version>6.1.14</spring.version>
         <spring.data.jpa.version>3.2.12</spring.data.jpa.version>
         <hibernate.version>6.4.10.Final</hibernate.version>
         <hibernate.validator.version>8.0.1.Final</hibernate.validator.version>
         <jackson.version>2.17.3</jackson.version>
-        <hikaricp.version>5.1.0</hikaricp.version>
-        <postgresql.version>42.7.4</postgresql.version>
-        <h2.version>2.2.224</h2.version>
-        <logback.version>1.5.12</logback.version>
         <junit.version>5.11.3</junit.version>
         <mockito.version>5.14.2</mockito.version>
     </properties>
 
     <dependencies>
-
-        <!-- ====================================== -->
-        <!-- 1. SPRING CORE & WEB MVC               -->
-        <!-- ====================================== -->
-
-        <!-- Contexte IoC et Injection de dépendances -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
-        <!-- Spring MVC et Contrôleurs REST -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
-        <!-- Support JDBC et gestion des transactions -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
-        <!-- Spring ORM : Fournit LocalContainerEntityManagerFactoryBean,
-             JpaTransactionManager et HibernateJpaVendorAdapter -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
-        <!-- ====================================== -->
-        <!-- 2. SPRING DATA JPA                     -->
-        <!-- ====================================== -->
-
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
             <version>${spring.data.jpa.version}</version>
         </dependency>
-
-        <!-- ====================================== -->
-        <!-- 3. JPA & HIBERNATE PROVIDER            -->
-        <!-- ====================================== -->
-
-        <!-- Spécification Jakarta Persistence (JPA 3.1) -->
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
             <version>3.1.0</version>
         </dependency>
-
-        <!-- Moteur Hibernate ORM 6.4.x -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
-
-        <!-- Pool de connexions HikariCP -->
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>${hikaricp.version}</version>
-        </dependency>
-
-        <!-- ====================================== -->
-        <!-- 4. BASE DE DONNÉES (POSTGRESQL & H2)   -->
-        <!-- ====================================== -->
-
-        <!-- Pilote JDBC PostgreSQL pour le conteneur Docker -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${postgresql.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- H2 Database conservé pour les tests unitaires et d'intégration -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>${h2.version}</version>
-            <scope>test</scope>
+            <version>2.3.232</version>
+            <scope>runtime</scope>
         </dependency>
-
-        <!-- ====================================== -->
-        <!-- 5. VALIDATION                          -->
-        <!-- ====================================== -->
-
-        <!-- Annotations de validation (@NotNull, @Email, @Size) -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.1.0</version>
+        </dependency>
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
             <version>3.0.2</version>
         </dependency>
-
-        <!-- Implémentation Hibernate Validator 8.x -->
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>${hibernate.validator.version}</version>
         </dependency>
-
-        <!-- Moteur Jakarta Expression Language requis par le validateur -->
         <dependency>
             <groupId>org.glassfish.expressly</groupId>
             <artifactId>expressly</artifactId>
             <version>5.0.0</version>
         </dependency>
-
-        <!-- ====================================== -->
-        <!-- 6. SÉRIALISATION JSON (JACKSON)        -->
-        <!-- ====================================== -->
-
-        <!-- Conversion Java Object <-> JSON -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-
-        <!-- Support des types de date Java 8+ (LocalDateTime) -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-
-        <!-- ====================================== -->
-        <!-- 7. SÉCURITÉ & HACHAGE                  -->
-        <!-- ====================================== -->
-
-        <!-- BCryptPasswordEncoder -->
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-crypto</artifactId>
-            <version>6.3.4</version>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
         </dependency>
-
-        <!-- ====================================== -->
-        <!-- 8. JOURNALISATION (LOGGING)            -->
-        <!-- ====================================== -->
-
-        <!-- Implémentation SLF4J requise par HikariCP et Hibernate -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
+            <version>1.5.12</version>
         </dependency>
-
-        <!-- ====================================== -->
-        <!-- 9. SERVLET CONTAINER API               -->
-        <!-- ====================================== -->
-
-        <!-- Fourni par Tomcat 10.1 au runtime -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
@@ -204,49 +115,47 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- ====================================== -->
-        <!-- 10. TESTS                              -->
-        <!-- ====================================== -->
-
-        <!-- JUnit 5 Engine -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- Mockito Core -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- Extension Mockito pour JUnit Jupiter -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- Spring Test Context & MockMvc -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
-        <finalName>UserManagementAPI</finalName>
-
+        <finalName>User_Management_API_war_exploded</finalName>
         <plugins>
-            <!-- Compilation Java 17 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -255,8 +164,6 @@
                     <release>17</release>
                 </configuration>
             </plugin>
-
-            <!-- Packaging WAR sans web.xml obligatoire -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -265,8 +172,6 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
-
-            <!-- Exécution des tests JUnit 5 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -274,5 +179,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

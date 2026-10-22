@@ -1,0 +1,173 @@
+{
+  "info": {
+    "_postman_id": "2c417bd0-bef7-4d22-a0dc-74f8102b88b5",
+    "name": "User Management API",
+    "description": "Public learning API. Use Authorization: No Auth for every request. Run in order: health, create ADMIN, create USER, CRUD, role filters, then error checks.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "noauth"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080/User_Management_API_war_exploded" },
+    { "key": "adminEmail", "value": "admin@example.com" },
+    { "key": "userEmail", "value": "user@example.com" },
+    { "key": "adminId", "value": "1" },
+    { "key": "userId", "value": "2" }
+  ],
+  "item": [
+    {
+      "name": "1. Health",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/health"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Health is public and UP', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().status).to.eql('UP'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Create ADMIN",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"System Admin\",\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"Admin12345!\",\n  \"role\": \"ADMIN\"\n}"
+        },
+        "url": "{{baseUrl}}/api/users"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('ADMIN created with 201 and no password', () => { pm.response.to.have.status(201); pm.expect(pm.response.json().role).to.eql('ADMIN'); pm.expect(pm.response.json()).not.to.have.property('password'); });",
+              "if (pm.response.code === 201) pm.environment.set('adminId', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Create USER",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Example User\",\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"UserPass123!\"\n}"
+        },
+        "url": "{{baseUrl}}/api/users"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('USER created with default role and no password', () => { pm.response.to.have.status(201); pm.expect(pm.response.json().role).to.eql('USER'); pm.expect(pm.response.json()).not.to.have.property('password'); });",
+              "if (pm.response.code === 201) pm.environment.set('userId', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. List active users",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/users" },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Returns active users with 200', () => { pm.response.to.have.status(200); pm.expect(pm.response.json()).to.be.an('array'); });",
+              "pm.test('No response exposes a password', () => pm.response.json().forEach(user => pm.expect(user).not.to.have.property('password')));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Filter ADMIN users",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/users/role/ADMIN" }
+    },
+    {
+      "name": "6. Filter USER users",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/users/role/USER" }
+    },
+    {
+      "name": "7. Get ADMIN by ID",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/users/{{adminId}}" }
+    },
+    {
+      "name": "8. Get USER by ID",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/users/{{userId}}" }
+    },
+    {
+      "name": "9. Update USER",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Updated Example User\",\n  \"email\": \"updated-user@example.com\"\n}"
+        },
+        "url": "{{baseUrl}}/api/users/{{userId}}"
+      }
+    },
+    {
+      "name": "10. Change USER password",
+      "request": {
+        "method": "PATCH",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"currentPassword\": \"UserPass123!\",\n  \"newPassword\": \"NewUserPass123!\"\n}"
+        },
+        "url": "{{baseUrl}}/api/users/{{userId}}/password"
+      }
+    },
+    {
+      "name": "11. Deactivate USER",
+      "request": { "method": "DELETE", "url": "{{baseUrl}}/api/users/{{userId}}" },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Deactivated with empty 204 response', () => { pm.response.to.have.status(204); pm.expect(pm.response.text()).to.eql(''); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12. Reject invalid create payload",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"\",\n  \"email\": \"invalid-email\",\n  \"password\": \"short\"\n}"
+        },
+        "url": "{{baseUrl}}/api/users"
+      }
+    },
+    {
+      "name": "13. Missing user returns 404",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/users/999999999" }
+    }
+  ]
+}
