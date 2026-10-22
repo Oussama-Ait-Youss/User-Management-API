@@ -1,6 +1,5 @@
 package com.usermanagementapi.model;
 
-import com.usermanagementapi.model.enums.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,6 +12,7 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 @Entity
 @Table(name = "users")
@@ -22,13 +22,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "first_name", nullable = false, length = 100)
-    private String firstName;
+    @Column(nullable = false, length = 200)
+    private String name;
 
-    @Column(name = "last_name", nullable = false, length = 100)
-    private String lastName;
-
-    @Column(nullable = false, unique = true, length = 150)
+    @Column(nullable = false, unique = true, length = 254)
     private String email;
 
     @Column(nullable = false)
@@ -36,38 +33,43 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private UserRole role;
+    private Role role = Role.USER;
 
     @Column(nullable = false)
-    private boolean active = true;
+    private Boolean active = true;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     public User() {
     }
 
-    public User(String firstName, String lastName, String email, String password, UserRole role) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
+    public User(String name, String email, String password, Role role) {
+        this.name = name;
+        setEmail(email);
         this.password = password;
-        this.role = role;
-        this.active = true;
+        this.role = role == null ? Role.USER : role;
     }
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
+        createdAt = now;
+        updatedAt = now;
+        if (role == null) {
+            role = Role.USER;
+        }
+        if (active == null) {
+            active = true;
+        }
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -78,23 +80,12 @@ public class User {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-    public String getName(){
-        return firstName + " " + lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -102,7 +93,7 @@ public class User {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = email == null ? null : email.trim().toLowerCase(Locale.ROOT);
     }
 
     public String getPassword() {
@@ -113,19 +104,19 @@ public class User {
         this.password = password;
     }
 
-    public UserRole getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(UserRole role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
-    public boolean isActive() {
+    public Boolean getActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 
